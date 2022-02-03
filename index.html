@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .square {
+            min-height: 90px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid display-3 text-center text-upper">
+            TicTacToe
+        </div>
+    </nav>
+</header>
+
+<main class="container-fluid">
+    <section class="container bg-grey">
+        <div class="row justify-content-center mb-5">
+            <div class="row display-3 font-weight-bold text-center" id="timer">
+                <div id="min"></div>:<div id="sec"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div id="status" class="my-5"></div>
+        <div class="row">
+            <div data-index="0" class="col-4 border display-3 text-center square"></div>
+            <div data-index="1" class="col-4 border display-3 text-center square"></div>
+            <div data-index="2" class="col-4 border display-3 text-center square"></div>
+
+            <div data-index="3" class="col-4 border display-3 text-center square"></div>
+            <div data-index="4" class="col-4 border display-3 text-center square"></div>
+            <div data-index="5" class="col-4 border display-3 text-center square"></div>
+
+            <div data-index="6" class="col-4 border display-3 text-center square"></div>
+            <div data-index="7" class="col-4 border display-3 text-center square"></div>
+            <div data-index="8" class="col-4 border display-3 text-center square"></div>
+        </div>
+    </section>
+</main>
+
+<script type="application/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Game
+        let squares = ["", "", "", "", "", "", "", "", ""];
+        let xIsNext =  true;
+
+        function calculateWinner(squares) {
+            const lines = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+            for (let i = 0; i < lines.length; i++) {
+                const [a, b, c] = lines[i];
+                if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                    return squares[a];
+                }
+            }
+            return null;
+        }
+
+        function handleClick(event) {
+            let i = parseInt(event.currentTarget.getAttribute("data-index"));
+
+            if(squares[i] === ""){
+                const winner = calculateWinner(squares);
+
+                if (winner) {
+                    document.getElementById('status').innerHTML  = winner + ' a gagné';
+                    return;
+                } else {
+                    document.getElementById('status').innerHTML  = 'Prochain joueur : ' + (xIsNext ? 'X' : 'O');
+                }
+
+                squares[i] = xIsNext ? 'X' : 'O';
+                this.innerHTML = (xIsNext ? 'X' : 'O');
+
+                xIsNext = !xIsNext;
+                document.getElementById('status').innerHTML = 'Prochain joueur : ' + (xIsNext ? 'X' : 'O');
+            }
+
+
+        }
+
+
+
+        const squareElements = document.getElementsByClassName('square');
+
+        for (var i = 0; i < squareElements.length; i++) {
+           squareElements[i].addEventListener('click', handleClick);
+        }
+
+
+
+        // Counter
+        let countdown;
+        const minutesElement = document.getElementById("min");
+        const secondsElement = document.getElementById("sec");
+
+        function timer(seconds) {
+            const now = Date.now();
+            const then = now + seconds * 1000;
+
+            countdown = setInterval(() => {
+                const secondsLeft = Math.round((then - Date.now()) / 1000);
+
+                if(secondsLeft <= 0) {
+                    clearInterval(countdown);
+                    secondsElement.textContent = '00';
+                    document.getElementById('status').innerHTML  = 'La partie est terminée';
+                    return;
+                }
+
+                displayTimeLeft(secondsLeft);
+
+            },1000);
+        }
+
+        function displayTimeLeft(seconds) {
+            minutesElement.textContent = Math.floor((seconds % 86400) % 3600 / 60);
+            secondsElement.textContent = seconds % 60 < 10 ? `0${seconds % 60}` : seconds % 60;
+        }
+
+        timer(180);
+    });
+</script>
+</body>
+</html>
